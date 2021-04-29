@@ -10,8 +10,6 @@
 
 #include <cuda.cuh>
 
-namespace dust {
-
 template <typename T>
 class device_array {
 public:
@@ -268,4 +266,3 @@ private:
   size_t stride_;
 };
 
-}

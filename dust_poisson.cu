@@ -34,7 +34,7 @@ __device__ int rpois(rng_state_t<real_t>& rng_state,
     // Keep trying until we surpass e^(-rate). This will take
     // expected time proportional to rate.
     while (true) {
-      real_t u = dust::unif_rand<real_t>(rng_state);
+      real_t u = unif_rand<real_t>(rng_state);
       prod = prod * u;
       if (prod <= exp_neg_rate && x <= integer_max()) {
         break;
@@ -122,7 +122,7 @@ __global__ void poisson_kernel(uint64_t * rng_state,
                                float *draws, const long n_draws, const int draw_per_thread) {
   for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n_draws; i += blockDim.x * gridDim.x) {
     interleaved<uint64_t> p_rng(rng_state, i, n_draws);
-    rng_state_t<real_t> rng_block = dust::get_rng_state<real_t>(p_rng);
+    rng_state_t<real_t> rng_block = get_rng_state<real_t>(p_rng);
     float draw = 0;
     for (int j = 0; j < draw_per_thread; ++j) {
         float new_draw = rpois(rng_block, j);
@@ -132,7 +132,7 @@ __global__ void poisson_kernel(uint64_t * rng_state,
     }
     draws[i] = draw;
     /* Copy state back to global memory */
-    dust::put_rng_state(rng_block, p_rng);
+    put_rng_state(rng_block, p_rng);
   }
 }
 

@@ -250,7 +250,7 @@ private:
 };
 
 template <typename T>
-__device__ rng_state_t<T> get_rng_state(const dust::interleaved<uint64_t>& full_rng_state) {
+__device__ rng_state_t<T> get_rng_state(const interleaved<uint64_t>& full_rng_state) {
   rng_state_t<T> rng_state;
   for (size_t i = 0; i < rng_state.size(); i++) {
     rng_state.state[i] = full_rng_state[i];
@@ -261,7 +261,7 @@ __device__ rng_state_t<T> get_rng_state(const dust::interleaved<uint64_t>& full_
 // Write state into global memory
 template <typename T>
 __device__ void put_rng_state(rng_state_t<T>& rng_state,
-                   dust::interleaved<uint64_t>& full_rng_state) {
+                   interleaved<uint64_t>& full_rng_state) {
   for (size_t i = 0; i < rng_state.size(); i++) {
     full_rng_state[i] = rng_state.state[i];
   }
@@ -281,7 +281,7 @@ device_array<uint64_t> load_rng(const size_t n_state) {
   std::vector<uint64_t> rng_i(n_state * rng_len); // Interleaved RNG state
   for (size_t i = 0; i < n_state; ++i) {
     // Interleave RNG state
-    dust::rng_state_t<real_t> p_rng = rng_state.state(i);
+    rng_state_t<real_t> p_rng = rng_state.state(i);
     size_t rng_offset = i;
     for (size_t j = 0; j < rng_len; ++j) {
       rng_offset = stride_copy(rng_i.data(), p_rng[j],
