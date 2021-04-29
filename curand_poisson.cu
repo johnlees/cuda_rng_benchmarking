@@ -5,6 +5,7 @@
 #include <cuda.h>
 #include <curand_kernel.h>
 #include <curand.h>
+#include <chrono>
 
 #define CUDA_CALL(x) do { if((x) != cudaSuccess) { \
     printf("Error at %s:%d\n",__FILE__,__LINE__); \
@@ -38,6 +39,8 @@ __global__ void simple_device_API_kernel(curandState *state,
 }
 
 int main() {
+  using namespace std::chrono;
+
   curandState *devStates;
 
   const long total_draws = 1 << 20;
@@ -52,7 +55,14 @@ int main() {
   const size_t blockCount = (total_draws + setup_blockSize - 1) / setup_blockSize;
   setup_kernel<<<blockCount, blockSize>>>(devStates);
 
+  high_resolution_clock::time_point t1 = high_resolution_clock::now();
   simple_device_API_kernel<<<blockSize, blockCount>>>(devStates, draws, total_draws, draw_per_thread);
+  high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+
+  std::cout << total_draws << " threads each drawing " << draw_per_thread << " ~Pois()" << std::endl;
+  std::cout << time_span.count() << " s" << std::endl;
 
   CUDA_CALL(cudaFree(draws));
   CUDA_CALL(cudaFree(devResults));
