@@ -15,18 +15,9 @@
 // going to use. This suppresses the warning as it is ok here.
 #define __nv_exec_check_disable__ _Pragma("nv_exec_check_disable")
 
-#include <dust/cuda_call.cuh>
+#include <cuda_call.cuh>
 
 #include <device_launch_parameters.h>
-
-#include <cooperative_groups.h>
-// CUDA 11 cooperative groups
-#if __CUDACC_VER_MAJOR__ >= 11
-#include <cooperative_groups/memcpy_async.h>
-#endif
-
-// cub functions (included with CUDA>=11)
-#include <cub/cub.cuh>
 
 #else
 #define DEVICE
