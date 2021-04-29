@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cfloat>
 #include <containers.cuh>
 
 template <typename T>
@@ -186,7 +187,6 @@ HOSTDEVICE real_t lgamma(real_t x) {
 #endif
 }
 
-#ifdef __NVCC__
 template <typename T>
 HOSTDEVICE T epsilon_nvcc();
 
@@ -199,7 +199,6 @@ template <>
 inline DEVICE double epsilon_nvcc() {
   return DBL_EPSILON;
 }
-#endif
 
 template <typename T>
 HOSTDEVICE T epsilon() {
