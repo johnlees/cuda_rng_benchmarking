@@ -6,6 +6,7 @@
 #include <curand_kernel.h>
 #include <curand.h>
 #include <chrono>
+#include <iostream>
 
 #define CUDA_CALL(x) do { if((x) != cudaSuccess) { \
     printf("Error at %s:%d\n",__FILE__,__LINE__); \
@@ -14,7 +15,7 @@
     printf("Error at %s:%d\n",__FILE__,__LINE__);\
     return EXIT_FAILURE;}} while(0)
 
-__global__ void setup_kernel(curandState *state) {
+__global__ void setup_kernel(curandState *state, const long n_draws) {
   for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n_draws;
     i += blockDim.x * gridDim.x) {
     /* Each thread gets same seed, a different sequence
@@ -52,8 +53,8 @@ int main() {
               sizeof(curandState)));
 
   const size_t blockSize = 64;
-  const size_t blockCount = (total_draws + setup_blockSize - 1) / setup_blockSize;
-  setup_kernel<<<blockCount, blockSize>>>(devStates);
+  const size_t blockCount = (total_draws + setup_blockSize - 1) / blockSize;
+  setup_kernel<<<blockCount, blockSize>>>(devStates, total_draws);
 
   high_resolution_clock::time_point t1 = high_resolution_clock::now();
   simple_device_API_kernel<<<blockSize, blockCount>>>(devStates, draws, total_draws, draw_per_thread);
