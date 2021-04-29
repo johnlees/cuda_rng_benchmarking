@@ -277,7 +277,7 @@ size_t stride_copy(T dest, U src, size_t at, size_t stride) {
 
 template <typename real_t>
 device_array<uint64_t> load_rng(const size_t n_state) {
-  pRNG rng_state<real_t>(n_state, xoshiro_initial_seed(1));
+  pRNG<real_t> rng_state(n_state, xoshiro_initial_seed(static_cast<uint64_t>(1)));
   const size_t rng_len = rng_state_t<real_t>::size();
   std::vector<uint64_t> rng_i(n_state * rng_len); // Interleaved RNG state
   for (size_t i = 0; i < n_state; ++i) {

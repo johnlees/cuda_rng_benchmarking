@@ -138,7 +138,7 @@ __global__ void poisson_kernel(uint64_t * rng_state,
 }
 
 int main(int argc, char *argv[]) {
-  typedef real_t float;
+  typedef float real_t;
   using namespace std::chrono;
 
   const long total_draws = std::stoi(argv[1]);
