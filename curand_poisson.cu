@@ -60,6 +60,7 @@ int main(int argc, char *argv[]) {
 
   high_resolution_clock::time_point t1 = high_resolution_clock::now();
   simple_device_API_kernel<<<blockSize, blockCount>>>(devStates, draws, total_draws, draw_per_thread);
+  CUDA_CALL(cudaDeviceSynchronize());
   high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
   duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
@@ -67,8 +68,10 @@ int main(int argc, char *argv[]) {
   std::cout << total_draws << " threads each drawing " << draw_per_thread << " ~Pois()" << std::endl;
   std::cout << time_span.count() << " s" << std::endl;
 
+  /*
   std::vector<float> h_draws(total_draws);
   CUDA_CALL(cudaMemcpy(h_draws.data(), draws, total_draws * sizeof(float), cudaMemcpyDefault));
+  */
 
   CUDA_CALL(cudaFree(draws));
   CUDA_CALL(cudaFree(devStates));
