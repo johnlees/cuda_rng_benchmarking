@@ -53,7 +53,7 @@ int main() {
               sizeof(curandState)));
 
   const size_t blockSize = 64;
-  const size_t blockCount = (total_draws + setup_blockSize - 1) / blockSize;
+  const size_t blockCount = (total_draws + blockSize - 1) / blockSize;
   setup_kernel<<<blockCount, blockSize>>>(devStates, total_draws);
 
   high_resolution_clock::time_point t1 = high_resolution_clock::now();
@@ -66,5 +66,5 @@ int main() {
   std::cout << time_span.count() << " s" << std::endl;
 
   CUDA_CALL(cudaFree(draws));
-  CUDA_CALL(cudaFree(devResults));
+  CUDA_CALL(cudaFree(devStates));
 }
