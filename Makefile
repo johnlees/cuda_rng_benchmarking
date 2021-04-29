@@ -12,3 +12,15 @@ curand_poisson:
 
 dust_poisson:
 	nvcc $(CUDAFLAGS) $(CPPFLAGS) dust_poisson.cu -o $@
+
+curand_norm:
+	nvcc $(CUDAFLAGS) $(CPPFLAGS) curand_norm.cu -o $@
+
+dust_norm:
+	nvcc $(CUDAFLAGS) $(CPPFLAGS) dust_norm.cu -o $@
+
+curand_unif:
+	nvcc $(CUDAFLAGS) $(CPPFLAGS) curand_unif.cu -o $@
+
+dust_unif:
+	nvcc $(CUDAFLAGS) $(CPPFLAGS) dust_unif.cu -o $@
