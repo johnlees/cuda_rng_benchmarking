@@ -9,3 +9,6 @@ all: curand_poisson curand_norm curand_unif dust_poisson dust_norm dust_unif
 
 curand_poisson:
 	nvcc $(CUDAFLAGS) $(CPPFLAGS) curand_poisson.cu -o $@
+
+dust_poisson:
+	nvcc $(CUDAFLAGS) $(CPPFLAGS) dust_poisson.cu -o $@
