@@ -7,6 +7,7 @@
 #include <curand.h>
 #include <chrono>
 #include <iostream>
+#include <string>
 
 #define CUDA_CALL(x) do { if((x) != cudaSuccess) { \
     printf("Error at %s:%d\n",__FILE__,__LINE__); \
@@ -39,13 +40,13 @@ __global__ void simple_device_API_kernel(curandState *state,
   }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   using namespace std::chrono;
 
   curandState *devStates;
 
-  const long total_draws = 1 << 20;
-  const int draw_per_thread = 128;
+  const long total_draws = std::stoi(argv[0]);
+  const int draw_per_thread = std::stoi(argv[1]);
 
   float* draws;
   CUDA_CALL(cudaMalloc((void**)&draws, total_draws * sizeof(float)));
@@ -64,6 +65,9 @@ int main() {
 
   std::cout << total_draws << " threads each drawing " << draw_per_thread << " ~Pois()" << std::endl;
   std::cout << time_span.count() << " s" << std::endl;
+
+  std::vector<float> h_draws(total_draws);
+  CUDA_CALL(cudaMemcpy(h_draws.data(), draws, total_draws * sizeof(float)));
 
   CUDA_CALL(cudaFree(draws));
   CUDA_CALL(cudaFree(devStates));
