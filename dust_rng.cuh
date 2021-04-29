@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <containers.cuh>
 
 template <typename T>
@@ -123,6 +124,13 @@ inline void xoshiro_long_jump(rng_state_t<T>& state) {
   state[3] = s3;
 }
 
+template <typename T, typename U = T>
+HOST U unif_rand(rng_state_t<T>& state) {
+  const uint64_t value = xoshiro_next(state);
+  return U(value) / U(std::numeric_limits<uint64_t>::max());
+}
+
+template <>
 inline __device__ double unif_rand(rng_state_t<double>& state) {
   const uint64_t value = xoshiro_next(state);
 #ifdef __CUDA_ARCH__
@@ -134,6 +142,7 @@ inline __device__ double unif_rand(rng_state_t<double>& state) {
   return rand;
 }
 
+template <>
 inline __device__ float unif_rand(rng_state_t<float>& state) {
   const uint64_t value = xoshiro_next(state);
 #ifdef __CUDA_ARCH__
@@ -277,7 +286,7 @@ size_t stride_copy(T dest, U src, size_t at, size_t stride) {
 
 template <typename real_t>
 device_array<uint64_t> load_rng(const size_t n_state) {
-  pRNG<real_t> rng_state(n_state, xoshiro_initial_seed(static_cast<uint64_t>(1)));
+  pRNG<real_t> rng_state(n_state, xoshiro_initial_seed<real_t>(static_cast<uint64_t>(1)));
   const size_t rng_len = rng_state_t<real_t>::size();
   std::vector<uint64_t> rng_i(n_state * rng_len); // Interleaved RNG state
   for (size_t i = 0; i < n_state; ++i) {
