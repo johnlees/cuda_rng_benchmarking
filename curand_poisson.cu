@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
 
   curandState *devStates;
 
-  const long total_draws = std::stoi(argv[0]);
-  const int draw_per_thread = std::stoi(argv[1]);
+  const long total_draws = std::stoi(argv[1]);
+  const int draw_per_thread = std::stoi(argv[2]);
 
   float* draws;
   CUDA_CALL(cudaMalloc((void**)&draws, total_draws * sizeof(float)));
