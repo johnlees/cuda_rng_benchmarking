@@ -33,9 +33,10 @@ __global__ void simple_device_API_kernel(curandState *state,
     /* Copy state to local memory for efficiency */
     float draw = 0;
     for (int j = 0; j < draw_per_thread; ++j) {
-        float new_draw = curand_poisson(&localState, j); 
+        float new_draw = curand_poisson(&localState, j);
         draw += new_draw;
         //printf("%d %d %f %f\n", i, j, new_draw, draw);
+        __syncwarp();
     }
     draws[i] = draw;
     /* Copy state back to global memory */
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]) {
   CUDA_CALL(cudaMalloc((void **)&devStates, total_draws *
               sizeof(curandState)));
 
-  const size_t blockSize = 64;
+  const size_t blockSize = 128;
   const size_t blockCount = (total_draws + blockSize - 1) / blockSize;
   setup_kernel<<<blockCount, blockSize>>>(devStates, total_draws);
   CUDA_CALL(cudaDeviceSynchronize());
