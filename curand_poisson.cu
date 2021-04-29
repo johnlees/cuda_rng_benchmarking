@@ -8,6 +8,7 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #define CUDA_CALL(x) do { if((x) != cudaSuccess) { \
     printf("Error at %s:%d\n",__FILE__,__LINE__); \
@@ -67,7 +68,7 @@ int main(int argc, char *argv[]) {
   std::cout << time_span.count() << " s" << std::endl;
 
   std::vector<float> h_draws(total_draws);
-  CUDA_CALL(cudaMemcpy(h_draws.data(), draws, total_draws * sizeof(float)));
+  CUDA_CALL(cudaMemcpy(h_draws.data(), draws, total_draws * sizeof(float), cudaMemcpyDefault));
 
   CUDA_CALL(cudaFree(draws));
   CUDA_CALL(cudaFree(devStates));
