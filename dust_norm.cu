@@ -17,7 +17,7 @@ __device__ inline real_t box_muller(rng_state_t<real_t>& rng_state) {
   // This function implements the Box-Muller transform:
   // http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#Basic_form
   // Do not send a really small number to log().
-  const real_t epsilon = epsilon<real_t>();
+  const real_t epsilon = epsilon_nvcc<real_t>();
   const real_t two_pi = 2 * M_PI;
 
   real_t u1, u2;

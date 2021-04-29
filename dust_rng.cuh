@@ -188,7 +188,7 @@ HOSTDEVICE real_t lgamma(real_t x) {
 }
 
 template <typename T>
-HOSTDEVICE T epsilon_nvcc();
+DEVICE T epsilon_nvcc();
 
 template <>
 inline DEVICE float epsilon_nvcc() {
@@ -198,15 +198,6 @@ inline DEVICE float epsilon_nvcc() {
 template <>
 inline DEVICE double epsilon_nvcc() {
   return DBL_EPSILON;
-}
-
-template <typename T>
-HOSTDEVICE T epsilon() {
-#ifdef __CUDA_ARCH__
-  return epsilon_nvcc<T>();
-#else
-  return std::numeric_limits<T>::epsilon();
-#endif
 }
 
 template <typename T>
