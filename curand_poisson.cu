@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
   const size_t blockSize = 64;
   const size_t blockCount = (total_draws + blockSize - 1) / blockSize;
   setup_kernel<<<blockCount, blockSize>>>(devStates, total_draws);
+  CUDA_CALL(cudaDeviceSynchronize());
 
   high_resolution_clock::time_point t1 = high_resolution_clock::now();
   simple_device_API_kernel<<<blockSize, blockCount>>>(devStates, draws, total_draws, draw_per_thread);
