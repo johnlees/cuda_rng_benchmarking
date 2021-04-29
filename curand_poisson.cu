@@ -33,7 +33,9 @@ __global__ void simple_device_API_kernel(curandState *state,
     /* Copy state to local memory for efficiency */
     float draw = 0;
     for (int j = 0; j < draw_per_thread; ++j) {
-        draw += curand_poisson(&localState, j);
+        float new_draw = curand_poisson(&localState, j); 
+        draw += new_draw;
+        //printf("%d %d %f %f\n", i, j, new_draw, draw);
     }
     draws[i] = draw;
     /* Copy state back to global memory */
@@ -60,7 +62,8 @@ int main(int argc, char *argv[]) {
   CUDA_CALL(cudaDeviceSynchronize());
 
   high_resolution_clock::time_point t1 = high_resolution_clock::now();
-  simple_device_API_kernel<<<blockSize, blockCount>>>(devStates, draws, total_draws, draw_per_thread);
+  simple_device_API_kernel<<<blockCount, blockSize>>>(devStates, draws, total_draws, draw_per_thread);
+  //simple_device_API_kernel<<<1, 1>>>(devStates, draws, total_draws, draw_per_thread);
   CUDA_CALL(cudaDeviceSynchronize());
   high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
