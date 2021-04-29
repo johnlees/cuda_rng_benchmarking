@@ -7,8 +7,8 @@ CUDAFLAGS +=-Xptxas -dlcm=ca --cudart static -gencode arch=compute_86,code=sm_86
 
 all: curand_poisson curand_norm curand_unif dust_poisson dust_norm dust_unif
 
-poisson_curand.cu.o:
-	nvcc $(CUDAFLAGS) $(CPPFLAGS) -x cu -c poisson_curand.cu -o $@
+curand_poisson.cu.o:
+	nvcc $(CUDAFLAGS) $(CPPFLAGS) -x cu -c curand_poisson.cu -o $@
 
-poisson_curand: poisson_curand.cu.o
+curand_poisson: poisson_curand.cu.o
 	$(LINK.cpp) $(CUDA_LDFLAGS) $^ -o $@ $(CUDA_LDLIBS)
