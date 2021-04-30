@@ -13,10 +13,10 @@
 #include <dust_rng.cuh>
 
 template <typename real_t>
-__global__ void unif_kernel(uint64_t * rng_state,
+__global__ void unif_kernel(uint32_t * rng_state,
                                real_t *draws, const long n_draws, const int draw_per_thread) {
   for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n_draws; i += blockDim.x * gridDim.x) {
-    interleaved<uint64_t> p_rng(rng_state, i, n_draws);
+    interleaved<uint32_t> p_rng(rng_state, i, n_draws);
     rng_state_t<real_t> rng_block = get_rng_state<real_t>(p_rng);
     float draw = 0;
     for (int j = 0; j < draw_per_thread; ++j) {
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   const long total_draws = std::stoi(argv[1]);
   const int draw_per_thread = std::stoi(argv[2]);
 
-  device_array<uint64_t> rng_state = load_rng<real_t>(total_draws);
+  device_array<uint32_t> rng_state = load_rng<real_t>(total_draws);
 
   real_t* draws;
   CUDA_CALL(cudaMalloc((void**)&draws, total_draws * sizeof(real_t)));
