@@ -143,10 +143,13 @@ inline __device__ double unif_rand(rng_state_t<double>& state) {
   return rand;
 }
 
+#define CURAND_2POW32_INV (2.3283064e-10f)
+
 template <>
 inline __device__ float unif_rand(rng_state_t<float>& state) {
   const uint64_t value = xoshiro_next(state);
 #ifdef __CUDA_ARCH__
+  float rand = static_cast<uint32_t>(value) * CURAND_2POW32_INV + (CURAND_2POW32_INV/2.0f);
   float rand = (__fdiv_rn(__ull2float_rn(value), 18446744073709551616.0f));
 #else
   float rand = float(value) / float(std::numeric_limits<uint64_t>::max());
