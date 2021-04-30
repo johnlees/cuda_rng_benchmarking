@@ -16,7 +16,7 @@ struct rng_state_t {
   }
 };
 
-static inline uint32_t rotl(const uint32_t x, int k) {
+static inline __host__ __device__ uint32_t rotl(const uint32_t x, int k) {
 	return (x << k) | (x >> (32 - k));
 }
 
@@ -87,7 +87,7 @@ inline void xoshiro_jump(rng_state_t<T>& state) {
 				s2 ^= state[2];
 				s3 ^= state[3];
 			}
-			next();
+			xoshiro_next(state);
 		}
 
 	state[0] = s0;
@@ -116,7 +116,7 @@ inline void xoshiro_long_jump(rng_state_t<T>& state) {
 				s2 ^= state[2];
 				s3 ^= state[3];
 			}
-			next();
+			xoshiro_next(state);
 		}
 
 	state[0] = s0;
