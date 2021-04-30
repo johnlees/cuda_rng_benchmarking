@@ -23,18 +23,18 @@ static inline uint32_t rotl(const uint32_t x, int k) {
 // This is the core generator (next() in the original C code)
 template <typename T>
 inline __host__ __device__ uint32_t xoshiro_next(rng_state_t<T>& state) {
-	const uint32_t result = s[0] + s[3];
+	const uint32_t result = state[0] + state[3];
 
-	const uint32_t t = s[1] << 9;
+	const uint32_t t = state[1] << 9;
 
-	s[2] ^= s[0];
-	s[3] ^= s[1];
-	s[1] ^= s[2];
-	s[0] ^= s[3];
+	state[2] ^= state[0];
+	state[3] ^= state[1];
+	state[1] ^= state[2];
+	state[0] ^= state[3];
 
-	s[2] ^= t;
+	state[2] ^= t;
 
-	s[3] = rotl(s[3], 11);
+	state[3] = rotl(state[3], 11);
 
 	return result;
 }
@@ -82,18 +82,18 @@ inline void xoshiro_jump(rng_state_t<T>& state) {
 	for(int i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
 		for(int b = 0; b < 32; b++) {
 			if (JUMP[i] & UINT32_C(1) << b) {
-				s0 ^= s[0];
-				s1 ^= s[1];
-				s2 ^= s[2];
-				s3 ^= s[3];
+				s0 ^= state[0];
+				s1 ^= state[1];
+				s2 ^= state[2];
+				s3 ^= state[3];
 			}
 			next();
 		}
 
-	s[0] = s0;
-	s[1] = s1;
-	s[2] = s2;
-	s[3] = s3;
+	state[0] = s0;
+	state[1] = s1;
+	state[2] = s2;
+	state[3] = s3;
 }
 
 /* This is the long-jump function for the generator. It is equivalent to
@@ -111,18 +111,18 @@ inline void xoshiro_long_jump(rng_state_t<T>& state) {
 	for(int i = 0; i < sizeof LONG_JUMP / sizeof *LONG_JUMP; i++)
 		for(int b = 0; b < 32; b++) {
 			if (LONG_JUMP[i] & UINT32_C(1) << b) {
-				s0 ^= s[0];
-				s1 ^= s[1];
-				s2 ^= s[2];
-				s3 ^= s[3];
+				s0 ^= state[0];
+				s1 ^= state[1];
+				s2 ^= state[2];
+				s3 ^= state[3];
 			}
 			next();
 		}
 
-	s[0] = s0;
-	s[1] = s1;
-	s[2] = s2;
-	s[3] = s3;
+	state[0] = s0;
+	state[1] = s1;
+	state[2] = s2;
+	state[3] = s3;
 }
 
 template <typename T, typename U = T>
@@ -206,7 +206,7 @@ inline DEVICE double epsilon_nvcc() {
 template <typename T>
 class pRNG { // # nocov
 public:
-  pRNG(const size_t n, const std::vector<uint64_t>& seed) {
+  pRNG(const size_t n, const std::vector<uint32_t>& seed) {
     rng_state_t<T> s;
     auto len = rng_state_t<T>::size();
     auto n_seed = seed.size() / len;
